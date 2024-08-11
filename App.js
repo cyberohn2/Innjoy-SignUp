@@ -27,36 +27,45 @@ const transporter = nodemailer.createTransport({
 });
 
 // Route to handle form submission with file uploads
-app.post('/submit-form', upload.array('files', 2), async (req, res) => {
-  const { firstName, lastName, phoneNumber, nin } = req.body;
+app.post('/submit-form', upload.array('files', 10), async (req, res) => {
+  const users = JSON.parse(req.body.users); // Parse users array from the request body
   const files = req.files;
 
-  // Nodemailer mail options
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.RECIPIENT_EMAIL, // Your recipient email address
-    subject: 'New User Account',
-    text: `
-      First Name: ${firstName}
-      Last Name: ${lastName}
-      Phone Number: ${phoneNumber}
-      NIN: ${nin}
-    `,
-    attachments: files.map((file) => ({
-      filename: file.originalname,
-      path: file.path,
-    })),
-  };
+  // Prepare the emails for each user
+  const emailPromises = users.map((user, index) => {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.RECIPIENT_EMAIL, // Your recipient email address
+      subject: `New User Account - ${user.firstName} ${user.lastName}`,
+      text: `
+        First Name: ${user.firstName}
+        Last Name: ${user.lastName}
+        Phone Number: ${user.phoneNumber}
+        NIN: ${user.nin}
+      `,
+      attachments: [
+        {
+          filename: files[index * 2]?.originalname, // Assuming 2 files per user
+          path: files[index * 2]?.path,
+        },
+        {
+          filename: files[index * 2 + 1]?.originalname,
+          path: files[index * 2 + 1]?.path,
+        }
+      ].filter(attachment => attachment.filename && attachment.path), // Filter out undefined attachments
+    };
 
-  // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      return res.status(500).json({ error: 'Failed to send email' });
-    }
-    console.log('Email sent: ' + info.response);
-    res.status(200).json({ message: 'Form submitted successfully' });
+    // Send email
+    return transporter.sendMail(mailOptions);
   });
+
+  try {
+    await Promise.all(emailPromises);
+    res.status(200).json({ message: 'Form submitted successfully for all users' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ error: 'Failed to send one or more emails' });
+  }
 });
 
 app.listen(PORT, () => {

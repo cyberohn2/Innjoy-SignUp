@@ -40,6 +40,7 @@ app.post('/submit-form', upload.fields([
 ]), async (req, res) => {
 try {
   const users = [];
+  
   // Extract user data from the request body
   Object.keys(req.body).forEach(key => {
     if (key.startsWith('user_')) {
@@ -48,11 +49,12 @@ try {
   });
 
   const files = req.files;
-  
-  users.forEach((user, index) => {
+
+  // Handle each user's data and files
+  for (const [index, user] of users.entries()) {
     const userFiles = [
-      files[`utilityBill_${index}`] && files[`utilityBill_${index}`][0],
-      files[`ninSlip_${index}`] && files[`ninSlip_${index}`][0]
+      files[`utilityBill_${index}`] ? files[`utilityBill_${index}`][0] : null,
+      files[`ninSlip_${index}`] ? files[`ninSlip_${index}`][0] : null
     ].filter(Boolean);
 
     // Prepare email options for each user
@@ -73,14 +75,13 @@ try {
     };
 
     // Send email for each user
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Error sending email:', error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
-  });
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent for user ${user.firstName} ${user.lastName}`);
+    } catch (error) {
+      console.error(`Error sending email for user ${user.firstName} ${user.lastName}:`, error);
+    }
+  }
 
   res.status(200).json({ message: 'Form submitted successfully for all users' });
 } catch (error) {

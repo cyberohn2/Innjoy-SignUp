@@ -10,7 +10,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// CORS setup
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST'], // Allow only specific methods
+  allowedHeaders: ['Content-Type'], // Allow specific headers
+}));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -19,7 +25,7 @@ const upload = multer({ dest: 'uploads/' });
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({
-  service: 'gmail', 
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -31,7 +37,6 @@ app.post('/submit-form', upload.array('files', 10), async (req, res) => {
   const users = JSON.parse(req.body.users); // Parse users array from the request body
   const files = req.files;
 
-  // Prepare the emails for each user
   const emailPromises = users.map((user, index) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -55,7 +60,6 @@ app.post('/submit-form', upload.array('files', 10), async (req, res) => {
       ].filter(attachment => attachment.filename && attachment.path), // Filter out undefined attachments
     };
 
-    // Send email
     return transporter.sendMail(mailOptions);
   });
 

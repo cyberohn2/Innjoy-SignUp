@@ -34,44 +34,32 @@ const transporter = nodemailer.createTransport({
 });
 
 // Route to handle form submission with file uploads
-app.post('/submit-form', upload.array('files', 10), async (req, res) => {
-  const users = JSON.parse(req.body.users); // Parse users array from the request body
-  const files = req.files;
-
-  const emailPromises = users.map((user, index) => {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL, // Your recipient email address
-      subject: `New User Account - ${user.firstName} ${user.lastName}`,
-      text: `
-        First Name: ${user.firstName}
-        Last Name: ${user.lastName}
-        Phone Number: ${user.phoneNumber}
-        NIN: ${user.nin}
-      `,
-      attachments: [
-        {
-          filename: files[index * 2]?.originalname, // Assuming 2 files per user
-          path: files[index * 2]?.path,
-        },
-        {
-          filename: files[index * 2 + 1]?.originalname,
-          path: files[index * 2 + 1]?.path,
-        }
-      ].filter(attachment => attachment.filename && attachment.path), // Filter out undefined attachments
-    };
-
-    return transporter.sendMail(mailOptions);
-  });
-
+app.post('/submit-form', upload.fields([{ name: 'files', maxCount: 10 }]), async (req, res) => {
   try {
-    await Promise.all(emailPromises);
-    res.status(200).json({ message: 'Form submitted successfully for all users' });
+      const users = [];
+      Object.keys(req.body).forEach(key => {
+          if (key.startsWith('user_')) {
+              users.push(JSON.parse(req.body[key]));
+          }
+      });
+
+      const files = req.files;
+      users.forEach((user, index) => {
+          const userFiles = [
+              files[`utilityBill_${index}`] && files[`utilityBill_${index}`][0],
+              files[`ninSlip_${index}`] && files[`ninSlip_${index}`][0]
+          ].filter(Boolean);
+
+          // Handle each user's data and files here...
+      });
+
+      res.status(200).json({ message: 'Form submitted successfully for all users' });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send one or more emails' });
+      console.error('Error handling form submission:', error);
+      res.status(500).json({ error: 'Failed to process form submission' });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

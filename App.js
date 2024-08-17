@@ -16,6 +16,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Example recipient emails
+const recipientEmails = [
+    process.env.RECIPIENT_EMAIL_1,
+    process.env.RECIPIENT_EMAIL_2,
+    process.env.RECIPIENT_EMAIL_3
+].join(',');
+
 // Route to handle contact form submission
 app.post('/contact', (req, res) => {
     const { name, message } = req.body;
@@ -32,11 +39,11 @@ app.post('/contact', (req, res) => {
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.RECIPIENT_EMAIL,
+        to: recipientEmails,
         subject: 'New Contact Form Submission',
-        text: `Name: ${name}\n Message: ${message}`,
+        text: `Name: ${name}\nMessage: ${message}`,
     };
-    console.log(mailOptions)
+
     // Send email
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -65,11 +72,11 @@ app.post('/submit-review', (req, res) => {
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.RECIPIENT_EMAIL,
+        to: recipientEmails,
         subject: 'New Review Submission',
         text: `You have received a new review:\n\nName: ${name}\nTitle: ${title}\nContent: ${content}`,
     };
-    console.log(mailOptions)
+
     // Send email
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -124,7 +131,7 @@ app.post('/submit-form', upload.fields([
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.RECIPIENT_EMAIL,
+        to: recipientEmails,
         subject: 'New Signup Form Submission',
         text: `You have a new user registering for ${packageInfo}. Details: ${formattedData}`,
         attachments: [
@@ -153,7 +160,7 @@ app.post('/sign-in', (req, res) => {
     Object.keys(formData).forEach((key, index) => {
         const data = formData[key];
         formattedData += `
-        ${index == 0 ? "Pilot Details" : "User " + (index )}
+        ${index == 0 ? "Pilot Details" : "User " + (index)}
         First Name: ${data.firstName}
         Last Name: ${data.lastName}
         Phone Number: ${data.phoneNumber}
@@ -172,7 +179,7 @@ app.post('/sign-in', (req, res) => {
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.RECIPIENT_EMAIL,
+        to: recipientEmails,
         subject: 'Existing User Form Submission',
         text: `You have a new sign-in submission from an existing user. Details:${formattedData}`,
     };

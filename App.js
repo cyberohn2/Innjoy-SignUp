@@ -19,7 +19,6 @@ const upload = multer({ storage: storage });
 // Example recipient emails
 const recipientEmails = [
     process.env.RECIPIENT_EMAIL_1,
-    process.env.RECIPIENT_EMAIL_2,
     process.env.RECIPIENT_EMAIL_3
 ].join(',');
 

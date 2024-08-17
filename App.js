@@ -16,6 +16,39 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Route to handle contact form submission
+app.post('/contact', (req, res) => {
+    const { name, message } = req.body;
+
+    // Nodemailer setup
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
+    });
+
+    // Prepare email content
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.RECIPIENT_EMAIL,
+        subject: 'New Contact Form Submission',
+        text: `Name: ${name}\n Message: ${message}`,
+    };
+    console.log(mailOptions)
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).send({ message: 'Failed to send Message', error });
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).send({ message: 'Message sent successfully' });
+        }
+    });
+});
+
 // Route to handle review form submission
 app.post('/submit-review', (req, res) => {
     const { name, title, content } = req.body;

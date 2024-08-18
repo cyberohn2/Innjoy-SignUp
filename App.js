@@ -40,7 +40,11 @@ app.post('/contact', (req, res) => {
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: 'New Contact Form Submission',
-        text: `Name: ${name}\nMessage: ${message}`,
+        html: `
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Message:</strong> ${message}</p>
+        `
+,
     };
 
     // Send email
@@ -73,7 +77,20 @@ app.post('/submit-review', (req, res) => {
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: 'New Review Submission',
-        text: `You have received a new review:\n\nName: ${name}\nTitle: ${title}\nContent: ${content}`,
+        html: `
+            <p>You have received a new review:</p>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Title:</strong> ${title}</p>
+            <p><strong>Content:</strong> ${content}</p>
+            <p>
+                <a 
+                    href="https://https://innjoytelcom.com.ng/send-review?name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}" 
+                    style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                    Accept and Send
+                </a>
+            </p>
+        `
+,
     };
 
     // Send email
@@ -106,12 +123,13 @@ app.post('/submit-form', upload.fields([
             if (subKey !== "package") {
                 const user = data[subKey];
                 formattedData += `
-                ${index === 0 ? "Pilot Details" : "Number " + index}
-                First Name: ${user.firstName}
-                Last Name: ${user.lastName}
-                Phone Number: ${user.phoneNumber}
-                NIN: ${user.nin}
+                <p><strong>${index === 0 ? "Pilot Details" : "Number " + index}</strong></p>
+                <p><strong>First Name:</strong> ${user.firstName}</p>
+                <p><strong>Last Name:</strong> ${user.lastName}</p>
+                <p><strong>Phone Number:</strong> ${user.phoneNumber}</p>
+                <p><strong>NIN:</strong> ${user.nin}</p>
                 `;
+;
             } else {
                 packageInfo = data[subKey];
             }
@@ -132,7 +150,12 @@ app.post('/submit-form', upload.fields([
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: 'New Signup Form Submission',
-        text: `You have a new user registering for ${packageInfo}. Details: ${formattedData}`,
+        html: `
+        <p>You have a new user registering for <strong>${packageInfo}</strong>.</p>
+        <p><strong>Details:</strong></p>
+        ${formattedData}
+        `
+,
         attachments: [
             { filename: files['utilityBill'][0].originalname, content: files['utilityBill'][0].buffer, encoding: 'base64' },
             { filename: files['ninSlip'][0].originalname, content: files['ninSlip'][0].buffer, encoding: 'base64' },
@@ -159,12 +182,13 @@ app.post('/sign-in', (req, res) => {
     Object.keys(formData).forEach((key, index) => {
         const data = formData[key];
         formattedData += `
-        ${index == 0 ? "Pilot Details" : "User " + (index)}
-        First Name: ${data.firstName}
-        Last Name: ${data.lastName}
-        Phone Number: ${data.phoneNumber}
-        ${index == 0 ? "" : "NIN: " + data.nin}
+        <p><strong>${index === 0 ? "Pilot Details" : "User " + index}</strong></p>
+        <p><strong>First Name:</strong> ${data.firstName}</p>
+        <p><strong>Last Name:</strong> ${data.lastName}</p>
+        <p><strong>Phone Number:</strong> ${data.phoneNumber}</p>
+        ${index === 0 ? "" : `<p><strong>NIN:</strong> ${data.nin}</p>`}
         `;
+
     });
 
     // Nodemailer setup
@@ -180,7 +204,12 @@ app.post('/sign-in', (req, res) => {
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: 'Existing User Form Submission',
-        text: `You have a new sign-in submission from an existing user. Details:${formattedData}`,
+        html: `
+        <p>You have a new sign-in submission from an existing user.</p>
+        <p><strong>Details:</strong></p>
+        ${formattedData}
+        `
+,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

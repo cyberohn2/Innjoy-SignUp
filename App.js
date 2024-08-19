@@ -90,7 +90,7 @@ app.post('/submit-review', (req, res) => {
                 </a>
                 <a 
                     href="https://innjoytelcom.com.ng/delete-review?title=${encodeURIComponent(title)}}" 
-                    style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                    style="padding: 10px 20px; background-color: #ff4545; color: white; text-decoration: none; border-radius: 5px;">
                     Delete This Review
                 </a>
             </p>

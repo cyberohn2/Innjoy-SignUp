@@ -84,7 +84,7 @@ app.post('/submit-review', (req, res) => {
             <p><strong>Content:</strong> ${content}</p>
             <p>
                 <a 
-                    href="https://https://innjoytelcom.com.ng/send-review?name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}" 
+                    href="https://innjoytelcom.com.ng/send-review?name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}" 
                     style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
                     Accept and Send
                 </a>

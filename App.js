@@ -83,16 +83,18 @@ app.post('/submit-review', (req, res) => {
             <p><strong>Title:</strong> ${title}</p>
             <p><strong>Content:</strong> ${content}</p>
             <p>
-                <a 
-                    href="https://innjoytelcom.com.ng/send-review?name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}" 
-                    style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
-                    Accept and Send
-                </a>
-                <a 
-                    href="https://innjoytelcom.com.ng/delete-review?title=${encodeURIComponent(title)}}" 
-                    style="padding: 10px 20px; background-color: #ff4545; color: white; text-decoration: none; border-radius: 5px;">
-                    Delete This Review
-                </a>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <a
+                        href="https://innjoytelcom.com.ng/send-review?name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}"
+                        style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                        Accept and Send
+                    </a>
+                    <a
+                        href="https://innjoytelcom.com.ng/delete-review?title=${encodeURIComponent(title)}}"
+                        style="padding: 10px 20px; background-color: #ff4545; color: white; text-decoration: none; border-radius: 5px;">
+                        Delete This Review
+                    </a>
+                </div>
             </p>
         `
 ,

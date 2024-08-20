@@ -75,7 +75,7 @@ app.post('/submit-review', (req, res) => {
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: recipientEmails,
+        to: recipientEmails[1],
         subject: 'New Review Submission',
         html: `
             <p>You have received a new review:</p>

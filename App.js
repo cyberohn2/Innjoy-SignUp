@@ -19,6 +19,7 @@ const upload = multer({ storage: storage });
 // Example recipient emails
 const recipientEmails = [
     process.env.RECIPIENT_EMAIL_1,
+    process.env.RECIPIENT_EMAIL_2,
     process.env.RECIPIENT_EMAIL_3
 ].join(',');
 
@@ -38,7 +39,7 @@ app.post('/contact', (req, res) => {
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: recipientEmails,
+        to: [recipientEmails[0], recipientEmails[1]].join(','),
         subject: 'New Contact Form Submission',
         html: `
         <p><strong>Name:</strong> ${name}</p>
@@ -75,7 +76,7 @@ app.post('/submit-review', (req, res) => {
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: recipientEmails[1],
+        to: to: recipientEmails[0],
         subject: 'New Review Submission',
         html: `
             <p>You have received a new review:</p>
@@ -151,7 +152,7 @@ app.post('/submit-form', upload.fields([
     // Prepare email content
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: recipientEmails,
+        to: [recipientEmails[0], recipientEmails[1]].join(','),
         subject: 'New Signup Form Submission',
         html: `
         <p>You have a new user registering for <strong>${packageInfo}</strong>.</p>
@@ -205,7 +206,7 @@ app.post('/sign-in', (req, res) => {
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: recipientEmails,
+        to: [recipientEmails[0], recipientEmails[1]].join(','),
         subject: 'Existing User Form Submission',
         html: `
         <p>You have a new sign-in submission from an existing user.</p>

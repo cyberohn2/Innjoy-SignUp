@@ -21,7 +21,7 @@ const recipientEmails = [
     process.env.RECIPIENT_EMAIL_1,
     process.env.RECIPIENT_EMAIL_2,
     process.env.RECIPIENT_EMAIL_3
-].join(',');
+];
 
 // Route to handle contact form submission
 app.post('/contact', (req, res) => {

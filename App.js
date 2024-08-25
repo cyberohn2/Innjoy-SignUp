@@ -79,7 +79,7 @@ app.post('/submit-review', (req, res) => {
         to: recipientEmails[0],
         subject: 'New Review Submission',
         html: `
-            <p>You have received a new review:</p>
+            <h1>You have received a new review:</h1>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Title:</strong> ${title}</p>
             <p><strong>Content:</strong> ${content}</p>
@@ -127,7 +127,7 @@ app.post('/submit-form', upload.fields([
             if (subKey !== "package") {
                 const user = data[subKey];
                 formattedData += `
-                <p><strong>${index === 0 ? "Pilot Details" : "Number " + index}</strong></p>
+                <h4><strong>${index === 0 ? "Pilot Details" : "Number " + index}</strong></h4>
                 <p><strong>First Name:</strong> ${user.firstName}</p>
                 <p><strong>Last Name:</strong> ${user.lastName}</p>
                 <p><strong>Phone Number:</strong> ${user.phoneNumber}</p>
@@ -155,8 +155,8 @@ app.post('/submit-form', upload.fields([
         to: [recipientEmails[0], recipientEmails[1]].join(','),
         subject: 'New Signup Form Submission',
         html: `
-        <p>You have a new user registering for <strong>${packageInfo}</strong>.</p>
-        <p><strong>Details:</strong></p>
+        <h1>You have a new user registering for <strong>${packageInfo}</strong>.</h1>
+        <h3><strong>Details:</strong></h3>
         ${formattedData}
         `
 ,
@@ -186,7 +186,7 @@ app.post('/sign-in', (req, res) => {
     Object.keys(formData).forEach((key, index) => {
         const data = formData[key];
         formattedData += `
-        <p><strong>${index === 0 ? "Pilot Details" : "User " + index}</strong></p>
+        <h4><strong>${index === 0 ? "Pilot Details" : "User " + index}</strong></h4>
         <p><strong>First Name:</strong> ${data.firstName}</p>
         <p><strong>Last Name:</strong> ${data.lastName}</p>
         <p><strong>Phone Number:</strong> ${data.phoneNumber}</p>
@@ -209,8 +209,8 @@ app.post('/sign-in', (req, res) => {
         to: [recipientEmails[0], recipientEmails[1]].join(','),
         subject: 'Existing User Form Submission',
         html: `
-        <p>You have a new sign-in submission from an existing user.</p>
-        <p><strong>Details:</strong></p>
+        <h1>You have a new sign-in submission from an existing user.</h1>
+        <h2><strong>Details:</strong></h2>
         ${formattedData}
         `
 ,

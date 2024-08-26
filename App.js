@@ -190,7 +190,7 @@ app.post('/sign-in', (req, res) => {
         <p><strong>First Name:</strong> ${data.firstName}</p>
         <p><strong>Last Name:</strong> ${data.lastName}</p>
         <p><strong>Phone Number:</strong> ${data.phoneNumber}</p>
-        ${index === 0 ? "" : `<p><strong>NIN:</strong> ${data.nin}</p>`}
+        <p><strong>NIN:</strong> ${data.nin}</p>
         `;
 
     });
